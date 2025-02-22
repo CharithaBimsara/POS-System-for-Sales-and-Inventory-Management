@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { FiShoppingCart, FiPackage, FiTrash, FiDollarSign } from 'react-icons/fi'; 
+import { FiShoppingCart, FiPackage, FiTrash, FiDollarSign } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import ProductManagement from './ProductManagement';
+import { Store } from "lucide-react";
 import NumberPad from './NumberPad';
 const shanthaImage = "/shantha.jpeg";
 
@@ -15,11 +16,11 @@ const Dashboard2 = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch products from API
-     // Fetch products from API
-     useEffect(() => {
+    // Fetch products from API
+    useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('https://40a6-192-248-95-64.ngrok-free.app/api/products', {
+                const response = await fetch('http://localhost:8080/api/products', {
                     headers: {
                         'ngrok-skip-browser-warning': 'true'
                     }
@@ -30,7 +31,7 @@ const Dashboard2 = () => {
                 }
 
                 const data = await response.json();
-                
+
                 if (!Array.isArray(data)) {
                     throw new Error('Invalid data format received from API');
                 }
@@ -42,7 +43,7 @@ const Dashboard2 = () => {
                     stock: parseInt(item.stock),
                     category: item.category
                 })));
-                
+
                 setError(null);
             } catch (err) {
                 console.error('API Error:', err);
@@ -59,11 +60,11 @@ const Dashboard2 = () => {
     // POS Functions
     const addToCart = async (product) => {
         if (product.stock <= 0) return;
-        
+
         try {
             // Update database stock
             const updatedProduct = { ...product, stock: product.stock - 1 };
-            const response = await fetch(`https://40a6-192-248-95-64.ngrok-free.app/api/products/${product.id}`, {
+            const response = await fetch(`http://localhost:8080/api/products/${product.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct)
@@ -74,15 +75,15 @@ const Dashboard2 = () => {
             // Update local state
             const existingItem = cart.find(item => item.id === product.id);
             const updatedCart = existingItem
-                ? cart.map(item => 
-                    item.id === product.id 
-                        ? { ...item, quantity: item.quantity + 1 } 
+                ? cart.map(item =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
                         : item
-                    )
+                )
                 : [...cart, { ...product, quantity: 1 }];
 
             setCart(updatedCart);
-            setProducts(products.map(p => 
+            setProducts(products.map(p =>
                 p.id === product.id ? updatedProduct : p
             ));
         } catch (err) {
@@ -98,12 +99,12 @@ const Dashboard2 = () => {
         try {
             // Restore stock in database
             const currentProduct = products.find(p => p.id === productId);
-            const updatedProduct = { 
-                ...currentProduct, 
-                stock: currentProduct.stock + removedItem.quantity 
+            const updatedProduct = {
+                ...currentProduct,
+                stock: currentProduct.stock + removedItem.quantity
             };
-            
-            const response = await fetch(`https://40a6-192-248-95-64.ngrok-free.app/api/products/${productId}`, {
+
+            const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedProduct)
@@ -113,7 +114,7 @@ const Dashboard2 = () => {
 
             // Update local state
             setCart(cart.filter(item => item.id !== productId));
-            setProducts(products.map(p => 
+            setProducts(products.map(p =>
                 p.id === productId ? updatedProduct : p
             ));
         } catch (err) {
@@ -146,23 +147,20 @@ const Dashboard2 = () => {
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-8">
                     <div className="flex items-center gap-4">
                         {/* Add this image container */}
+
                         <div className="flex items-center">
-                            <img 
-                                  src={shanthaImage}  // Replace with your actual image path
-                                alt="Profile"
-                                className="w-20 h-20 rounded-full border-2 border-white shadow-sm"
-                            />
+                            <Store className="w-20 h-20 p-2 rounded-full border-2 border-white shadow-sm bg-gray-200" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-800">Shantha hardware</h1>
+                            <h1 className="text-3xl font-bold text-gray-800">John's hardware</h1>
                             <p className="text-gray-600 mt-2">Manage your paint shop operations</p>
                         </div>
                     </div>
 
-                    
+
                     <div className="flex gap-2 mt-4 md:mt-0">
                         <button
                             onClick={() => setActiveTab('pos')}
@@ -194,8 +192,8 @@ const Dashboard2 = () => {
                                             key={product.id}
                                             onClick={() => addToCart(product)}
                                             disabled={product.stock === 0}
-                                            className={`p-4 rounded-lg text-left ${product.stock === 0 
-                                                ? 'bg-gray-100 cursor-not-allowed' 
+                                            className={`p-4 rounded-lg text-left ${product.stock === 0
+                                                ? 'bg-gray-100 cursor-not-allowed'
                                                 : 'bg-blue-50 hover:bg-blue-100'}`}
                                         >
                                             <h3 className="font-medium">{product.name}</h3>
@@ -263,7 +261,7 @@ const Dashboard2 = () => {
                                     </div>
                                 </div>
 
-                                <NumberPad 
+                                <NumberPad
                                     onInput={(input) => {
                                         if (input === 'backspace') {
                                             setAmountReceived(prev => prev.slice(0, -1));
@@ -275,7 +273,7 @@ const Dashboard2 = () => {
                                                 return prev + input;
                                             });
                                         }
-                                    }} 
+                                    }}
                                 />
 
                                 {amountReceived > 0 && (

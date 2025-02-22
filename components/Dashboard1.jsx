@@ -35,7 +35,7 @@ const Dashboard1 = () => {
   useEffect(() => {
     const fetchProductsAndCreateShop = async () => {
       try {
-        const response = await fetch('https://40a6-192-248-95-64.ngrok-free.app/api/products', {
+        const response = await fetch('http://localhost:8080/api/products', {
           headers: {
             'ngrok-skip-browser-warning': 'true',
             'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const Dashboard1 = () => {
         // Create API shop with calculated values
         const apiShop = {
           id: 1,
-          name: "Shantha Hardware",
+          name: "john's Hardware",
           location: "Digital Zone",
           stock: products.map(product => ({
             product: product.name,
