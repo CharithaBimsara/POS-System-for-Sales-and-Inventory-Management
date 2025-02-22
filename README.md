@@ -6,7 +6,7 @@ This project is a **Point of Sale (POS) system** designed for efficient sales tr
 
 ## Demo
 
-![POS System Demo](./demo.png)  
+![POS System Demo](demo.png)  
 
 ## 🛠️ Tech Stack
 
